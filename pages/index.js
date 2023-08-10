@@ -16,7 +16,7 @@ export default function Home({ pets }) {
     const items = gsap.utils.toArray('.items');
   
     items.forEach((item, i) => {
-      const anim = gsap.fromTo(item, {autoAlpha: 0, y: 5}, {duration: 0.8, autoAlpha: 1, y: 0})
+      const anim = gsap.fromTo(item, {autoAlpha: 0 }, {duration: 0.8, autoAlpha: 1})
 
       ScrollTrigger.create({
         trigger: item,
