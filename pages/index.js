@@ -10,12 +10,11 @@ export default function Home({ pets }) {
   const ulRef = useRef()
   console.log(pets)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
 
     const items = gsap.utils.toArray('.items');
   
-
     items.forEach((item, i) => {
       const anim = gsap.fromTo(item, {autoAlpha: 0, y: 5}, {duration: 0.8, autoAlpha: 1, y: 0})
 
