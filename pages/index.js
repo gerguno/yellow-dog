@@ -10,15 +10,15 @@ export default function Home({ pets }) {
   const ulRef = useRef()
   console.log(pets)
 
-  useLayoutEffect(() => {
-    // create our context. This function is invoked immediately and all GSAP animations and ScrollTriggers created during the execution of this function get recorded so we can revert() them later (cleanup)
-    let ctx = gsap.context(() => {
-      gsap.to(ulRef.current, { opacity: 1 });
-    }, mainRef); 
+  // useLayoutEffect(() => {
+  //   // create our context. This function is invoked immediately and all GSAP animations and ScrollTriggers created during the execution of this function get recorded so we can revert() them later (cleanup)
+  //   let ctx = gsap.context(() => {
+  //     gsap.to(ulRef.current, { opacity: 1 });
+  //   }, mainRef); 
     
-    return () => ctx.revert(); // cleanup
+  //   return () => ctx.revert(); // cleanup
     
-  }, []);
+  // }, []);
 
   useEffect(() => {
     // gsap.registerPlugin(ScrollTrigger); 
@@ -63,9 +63,9 @@ export default function Home({ pets }) {
     
   }, [])
 
-  const imageLoader = ({ src, width, height }) => {
-    return `${src}?w=${width}&h=${height}&auto=format&fit=crop&blur=1000`
-  }
+  // const imageLoader = ({ src, width, height }) => {
+  //   return `${src}?w=${width}&h=${height}&auto=format&fit=crop&blur=1000`
+  // }
 
   return (
     <>
@@ -76,14 +76,17 @@ export default function Home({ pets }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main ref={mainRef}>
-        <ul ref={ulRef} style={{ opacity: 0 }}>
+        <ul ref={ulRef} 
+          // style={{ opacity: 0 }}
+        >
           {pets.map((pet, index) => (
               <li key={index}>
                 <span>{pet.name} loves {pet.favFood}</span> <br/>
                 <Image 
-                  loader={imageLoader}
                   loading="lazy" 
-                  src={`${pet.url}?w=500&h=500&dpr=2&auto=format&fit=crop`}
+                  placeholer="blur"
+                  blurDataURL={pet.blurDataURL.metadata.lqip}
+                  src={`${pet.url}?w=2000&h=2000&dpr=2&auto=format&fit=crop`}
                   width={500} 
                   height={500} 
                   unoptimized={true}
@@ -106,8 +109,14 @@ const client = createClient({
 
 export async function getStaticProps() {
   const pets = await client.fetch(`*[_type == "pet"]{
-    name, favFood,
-    "url": photo.asset->url
+    name, 
+    favFood, 
+    "url": photo.asset->url,
+    "blurDataURL": photo.asset->{
+      metadata {
+        lqip
+      }
+    }
   }`)
   return {
     props: {
