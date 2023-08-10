@@ -1,11 +1,72 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
+import { createClient } from "next-sanity";
+import { useEffect, useRef, useLayoutEffect } from 'react';
+import { gsap } from "gsap/dist/gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 
-const inter = Inter({ subsets: ['latin'] })
+export default function Home({ pets }) {
+  const mainRef = useRef()
+  const ulRef = useRef()
+  console.log(pets)
 
-export default function Home() {
+  useLayoutEffect(() => {
+    // create our context. This function is invoked immediately and all GSAP animations and ScrollTriggers created during the execution of this function get recorded so we can revert() them later (cleanup)
+    let ctx = gsap.context(() => {
+      gsap.to(ulRef.current, { opacity: 1 });
+    }, mainRef); 
+    
+    return () => ctx.revert(); // cleanup
+    
+  }, []);
+
+  useEffect(() => {
+    // gsap.registerPlugin(ScrollTrigger); 
+
+    // ScrollTrigger.config({ limitCallbacks: true });
+
+    // gsap.utils.toArray(".lazy").forEach(image => {
+      
+    //   let newSRC = image.dataset.src,
+    //       newImage = document.createElement("img"),
+     
+    //   loadImage = () => {
+    //     newImage.onload = () => {
+    //       newImage.onload = null; // avoid recursion
+    //       newImage.src = image.src; // swap the src
+    //       image.src = newSRC;
+    //       // place the low-res version on TOP and then fade it out.
+    //       gsap.set(newImage, {
+    //         position: "absolute", 
+    //         top: image.offsetTop, 
+    //         left: image.offsetLeft, 
+    //         width: image.offsetWidth, 
+    //         height: image.offsetHeight
+    //       });
+    //       image.parentNode.appendChild(newImage);
+    //       gsap.to(newImage, {
+    //         opacity: 0, 
+    //         onComplete: () => newImage.parentNode.removeChild(newImage)
+    //       });
+    //       st && st.kill();
+    //     }
+    //     newImage.src = newSRC;
+    //   }, 
+          
+    //   st = ScrollTrigger.create({
+    //     trigger: image,
+    //     start: "-50% bottom",
+    //     onEnter: loadImage,
+    //     onEnterBack: loadImage // make sure it works in either direction
+    //   });
+    // });
+    
+  }, [])
+
+  const imageLoader = ({ src, width, height }) => {
+    return `${src}?w=${width}&h=${height}&auto=format&fit=crop&blur=1000`
+  }
+
   return (
     <>
       <Head>
@@ -14,101 +75,43 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={`${styles.main} ${inter.className}`}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>pages/index.js</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
-          </div>
-        </div>
-
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-        </div>
-
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
-        </div>
+      <main ref={mainRef}>
+        <ul ref={ulRef} style={{ opacity: 0 }}>
+          {pets.map((pet, index) => (
+              <li key={index}>
+                <span>{pet.name} loves {pet.favFood}</span> <br/>
+                <Image 
+                  loader={imageLoader}
+                  loading="lazy" 
+                  src={`${pet.url}?w=500&h=500&dpr=2&auto=format&fit=crop`}
+                  width={500} 
+                  height={500} 
+                  unoptimized={true}
+                />
+              </li>
+          ))
+          }
+        </ul>
       </main>
     </>
   )
+}
+
+const client = createClient({
+  projectId: "sjik838z",
+  dataset: "production",
+  apiVersion: "2022-03-25",
+  useCdn: false
+});
+
+export async function getStaticProps() {
+  const pets = await client.fetch(`*[_type == "pet"]{
+    name, favFood,
+    "url": photo.asset->url
+  }`)
+  return {
+    props: {
+      pets
+    }
+  };
 }
