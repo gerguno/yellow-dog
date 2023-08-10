@@ -10,15 +10,23 @@ export default function Home({ pets }) {
   const ulRef = useRef()
   console.log(pets)
 
-  // useLayoutEffect(() => {
-  //   // create our context. This function is invoked immediately and all GSAP animations and ScrollTriggers created during the execution of this function get recorded so we can revert() them later (cleanup)
-  //   let ctx = gsap.context(() => {
-  //     gsap.to(ulRef.current, { opacity: 1 });
-  //   }, mainRef); 
-    
-  //   return () => ctx.revert(); // cleanup
-    
-  // }, []);
+  useLayoutEffect(() => {
+    gsap.registerPlugin(ScrollTrigger)
+
+    const items = gsap.utils.toArray('.items');
+  
+
+    items.forEach((item, i) => {
+      const anim = gsap.fromTo(item, {autoAlpha: 0, y: 5}, {duration: 0.8, autoAlpha: 1, y: 0})
+
+      ScrollTrigger.create({
+        trigger: item,
+        animation: anim,
+        toggleActions: 'play none none none',
+        once: true,
+      })
+    })
+  }, []);
 
   return (
     <>
@@ -29,18 +37,16 @@ export default function Home({ pets }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main ref={mainRef}>
-        <ul ref={ulRef} 
-          style={{ opacity: 1 }}
-        >
+        <ul ref={ulRef}>
           {pets.map((pet, index) => (
-              <li key={index}>
+              <li key={index} className='items'>
                 <span>{pet.name} loves {pet.favFood}</span> <br/>
                 <Image 
                   alt={pet.name}
                   loading="lazy" 
                   placeholder="blur"
                   blurDataURL={pet.blurDataURL.metadata.lqip}
-                  src={`${pet.url}?w=500&h=500&dpr=2&auto=format&fit=crop`}
+                  src={`${pet.url}?w=1000&h=1000&dpr=2&auto=format&fit=crop`}
                   width={500} 
                   height={500} 
                   unoptimized={true}
