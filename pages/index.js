@@ -38,7 +38,7 @@ export default function Home({ pets }) {
       <main ref={mainRef}>
         <ul ref={ulRef}>
           {pets.map((pet, index) => (
-              <li key={index} className='items'>
+              <li key={index} className='items' style={{ opacity: 0 }}>
                 <span>{pet.name} loves {pet.favFood}</span> <br/>
                 <Image 
                   alt={pet.name}
