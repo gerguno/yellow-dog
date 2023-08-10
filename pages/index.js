@@ -20,53 +20,6 @@ export default function Home({ pets }) {
     
   // }, []);
 
-  useEffect(() => {
-    // gsap.registerPlugin(ScrollTrigger); 
-
-    // ScrollTrigger.config({ limitCallbacks: true });
-
-    // gsap.utils.toArray(".lazy").forEach(image => {
-      
-    //   let newSRC = image.dataset.src,
-    //       newImage = document.createElement("img"),
-     
-    //   loadImage = () => {
-    //     newImage.onload = () => {
-    //       newImage.onload = null; // avoid recursion
-    //       newImage.src = image.src; // swap the src
-    //       image.src = newSRC;
-    //       // place the low-res version on TOP and then fade it out.
-    //       gsap.set(newImage, {
-    //         position: "absolute", 
-    //         top: image.offsetTop, 
-    //         left: image.offsetLeft, 
-    //         width: image.offsetWidth, 
-    //         height: image.offsetHeight
-    //       });
-    //       image.parentNode.appendChild(newImage);
-    //       gsap.to(newImage, {
-    //         opacity: 0, 
-    //         onComplete: () => newImage.parentNode.removeChild(newImage)
-    //       });
-    //       st && st.kill();
-    //     }
-    //     newImage.src = newSRC;
-    //   }, 
-          
-    //   st = ScrollTrigger.create({
-    //     trigger: image,
-    //     start: "-50% bottom",
-    //     onEnter: loadImage,
-    //     onEnterBack: loadImage // make sure it works in either direction
-    //   });
-    // });
-    
-  }, [])
-
-  // const imageLoader = ({ src, width, height }) => {
-  //   return `${src}?w=${width}&h=${height}&auto=format&fit=crop&blur=1000`
-  // }
-
   return (
     <>
       <Head>
@@ -77,16 +30,17 @@ export default function Home({ pets }) {
       </Head>
       <main ref={mainRef}>
         <ul ref={ulRef} 
-          // style={{ opacity: 0 }}
+          style={{ opacity: 1 }}
         >
           {pets.map((pet, index) => (
               <li key={index}>
                 <span>{pet.name} loves {pet.favFood}</span> <br/>
                 <Image 
+                  alt={pet.name}
                   loading="lazy" 
-                  placeholer="blur"
+                  placeholder="blur"
                   blurDataURL={pet.blurDataURL.metadata.lqip}
-                  src={`${pet.url}?w=2000&h=2000&dpr=2&auto=format&fit=crop`}
+                  src={`${pet.url}?w=4000&h=4000&dpr=2&auto=format&fit=crop`}
                   width={500} 
                   height={500} 
                   unoptimized={true}
