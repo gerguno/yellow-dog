@@ -40,7 +40,7 @@ export default function Home({ pets }) {
                   loading="lazy" 
                   placeholder="blur"
                   blurDataURL={pet.blurDataURL.metadata.lqip}
-                  src={`${pet.url}?w=4000&h=4000&dpr=2&auto=format&fit=crop`}
+                  src={`${pet.url}?w=500&h=500&dpr=2&auto=format&fit=crop`}
                   width={500} 
                   height={500} 
                   unoptimized={true}
